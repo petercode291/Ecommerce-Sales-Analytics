@@ -1,0 +1,24 @@
+product_id,product_name,category,price,cost
+P001,Quilted Jacket,Outerwear,129,58.05
+P002,Wool Blend Coat,Outerwear,169,84.5
+P003,Puffer Vest,Outerwear,89,37.38
+P004,Fleece Hoodie,Outerwear,64,25.6
+P005,Linen Shirt,Tops,48,18.24
+P006,Cotton Tee,Tops,22,7.7
+P007,Printed Blouse,Tops,41,15.58
+P008,Knit Sweater,Tops,72,30.24
+P009,Silk Scarf,Accessories,35,10.5
+P010,Leather Belt,Accessories,39,14.04
+P011,Sunglasses,Accessories,55,18.15
+P012,Wool Beanie,Accessories,20,6.4
+P013,Canvas Tote,Bags,32,10.88
+P014,Leather Backpack,Bags,118,56.64
+P015,Crossbody Bag,Bags,76,33.44
+P016,Ceramic Mug Set,Home,36,13.32
+P017,Cotton Throw Blanket,Home,58,23.2
+P018,Scented Candle,Home,24,6.72
+P019,Linen Cushion Cover,Home,19,6.27
+P020,Table Runner,Home,28,9.52
+P021,Canvas Sneakers,Footwear,62,28.52
+P022,Leather Sandals,Footwear,54,22.68
+P023,Ankle Boots,Footwear,98,49.0
