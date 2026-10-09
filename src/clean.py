@@ -3,11 +3,12 @@ import sqlite3
 import sys
 from pathlib import Path
 
+
 def clean_and_load_data():
     raw_dir = Path('data/raw')
     processed_dir = Path('data/processed')
     processed_dir.mkdir(parents=True, exist_ok=True)
-    
+
     orders = pd.read_csv(raw_dir / 'orders.csv')
     order_items = pd.read_csv(raw_dir / 'order_items.csv')
     products = pd.read_csv(raw_dir / 'products.csv')
@@ -15,9 +16,11 @@ def clean_and_load_data():
     marketing_spend = pd.read_csv(raw_dir / 'marketing_spend.csv')
 
    # 1. Date Parsing Fix (Explicit formats)
-    ts = pd.to_datetime(orders['order_timestamp'], format="%Y-%m-%d %H:%M:%S", errors='coerce')
+    ts = pd.to_datetime(orders['order_timestamp'],
+                        format="%Y-%m-%d %H:%M:%S", errors='coerce')
     slash = ts.isna()
-    ts.loc[slash] = pd.to_datetime(orders.loc[slash, "order_timestamp"], format="%d/%m/%Y %H:%M", errors='coerce')
+    ts.loc[slash] = pd.to_datetime(
+        orders.loc[slash, "order_timestamp"], format="%d/%m/%Y %H:%M", errors='coerce')
     orders['order_timestamp'] = ts
 
    # FIX: Clean the data by dropping the planted bad dates
@@ -26,7 +29,7 @@ def clean_and_load_data():
 
     # FIX: Drop duplicate orders to prevent the UNIQUE constraint error
     orders = orders.drop_duplicates(subset=['order_id'])
-    
+
     # Date Validation
     if orders['order_timestamp'].isna().any():
         print("ERROR: Missing or unparseable dates found.")
@@ -37,12 +40,16 @@ def clean_and_load_data():
 
     # 2. Text Standardization & Missing Values
     orders['status'] = orders['status'].str.lower().str.strip()
-    orders['payment_method'] = orders['payment_method'].astype(str).str.strip().replace('NAN', None)
-    
-    country_map = {'UNITED STATES': 'USA', 'U.K.': 'UK', 'UNITED KINGDOM': 'UK'}
-    customers['country'] = customers['country'].str.upper().str.strip().replace(country_map)
-    orders['country'] = orders['country'].str.upper().str.strip().replace(country_map)
-    
+    orders['payment_method'] = orders['payment_method'].astype(
+        str).str.strip().replace('NAN', None)
+
+    country_map = {'UNITED STATES': 'USA',
+                   'U.K.': 'UK', 'UNITED KINGDOM': 'UK'}
+    customers['country'] = customers['country'].str.upper(
+    ).str.strip().replace(country_map)
+    orders['country'] = orders['country'].str.upper(
+    ).str.strip().replace(country_map)
+
     initial_items = len(order_items)
     order_items = order_items.dropna(subset=['unit_price'])
     items_dropped = initial_items - len(order_items)
@@ -52,7 +59,7 @@ def clean_and_load_data():
     if db_path.exists():
         db_path.unlink()
     conn = sqlite3.connect(db_path)
-    
+
     conn.executescript('''
         CREATE TABLE customers (customer_id TEXT PRIMARY KEY, signup_date TEXT, country TEXT, acquisition_channel TEXT, email_opt_in BOOLEAN);
         CREATE TABLE products (product_id TEXT PRIMARY KEY, product_name TEXT, category TEXT, price REAL, cost REAL);
@@ -69,7 +76,8 @@ def clean_and_load_data():
     products.to_sql('products', conn, if_exists='append', index=False)
     orders.to_sql('orders', conn, if_exists='append', index=False)
     order_items.to_sql('order_items', conn, if_exists='append', index=False)
-    marketing_spend.to_sql('marketing_spend', conn, if_exists='append', index=False)
+    marketing_spend.to_sql('marketing_spend', conn,
+                           if_exists='append', index=False)
 
     # 4. Create Delivered Revenue View
     conn.execute('''
@@ -84,7 +92,9 @@ def clean_and_load_data():
     ''')
     conn.close()
 
-    print(f"Data Cleaning Report:\n- Fixed 17 country spellings & 6 status spellings.\n- Dropped {items_dropped} items missing unit_price.\n- Successfully built Database with Keys and Views.")
+    print(
+        f"Data Cleaning Report:\n- Fixed 17 country spellings & 6 status spellings.\n- Dropped {items_dropped} items missing unit_price.\n- Successfully built Database with Keys and Views.")
+
 
 if __name__ == "__main__":
     clean_and_load_data()
